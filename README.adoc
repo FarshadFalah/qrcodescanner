@@ -2,7 +2,7 @@
 
 image::https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io", alt="Vert.x", width=100]
 image::https://img.shields.io/badge/Html5--QRCode-2.3.8-green.svg[link="https://github.com/mebjas/html5-qrcode", alt="Html5-QRCode", width=150]
-image::https://img.shields.io/badge/graalvm--java-17-orange.svg[link="https://github.com/mebjas/html5-qrcode", alt="Html5-QRCode", width=150]
+image::https://img.shields.io/badge/graalvm--java-17-orange.svg[link="https://www.graalvm.org/downloads/", alt="Html5-QRCode", width=150]
 
 This is a web-based QR code scanner that reads a file line by line and checks if text exists in that file.
 
