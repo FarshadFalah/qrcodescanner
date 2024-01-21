@@ -12,14 +12,14 @@ To run it on HTTP, you must provide the address of the input file and the addres
 
 [source,bash]
 ----
--i "Your Input File Address" -o "Your Output File Address"
+ java -jar .\target\qrcodescanner-1.0.0-fat.jar -i "Your Input File Address" -o "Your Output File Address"
 ----
 
 If you want to run it on HTTPS, you must set SSL to true and provide the application with your KeyStore address and password:
 
 [source,bash]
 ----
--i "Your Input File Address" -o "Your Output File Address" -ssl "true" -k "Your KeyStore Address" -p "Your KeyStore Password"
+ java -jar qrcodescanner-1.0.0-fat.jar -i "Your Input File Address" -o "Your Output File Address" -ssl "true" -k "Your KeyStore Address" -p "Your KeyStore Password"
 ----
 
 For creating a self-hosted KeyStore, use the following command:
