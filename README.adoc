@@ -29,4 +29,4 @@ For creating a self-hosted KeyStore, use the following command:
 keytool -genkeypair -alias aliasName -keyalg RSA -keysize 2048 -keystore keystoreName.jks -validity 3650
 ----
 
-Created by *Farshad Fallah* for https://shirazlinuxcommunity.ir[*Shiraz Linux Community*].
+Created by mailto:farshad.ftf@gmail.com[*Farshad Fallah*] for https://shirazlinuxcommunity.ir[*Shiraz Linux Community*].

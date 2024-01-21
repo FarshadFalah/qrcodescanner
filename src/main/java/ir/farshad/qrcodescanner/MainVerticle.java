@@ -87,7 +87,7 @@ public class MainVerticle extends AbstractVerticle {
       OUTPUT_FILE_PATH = cmd.getOptionValue("outputFile");
       LOGGER.info(OUTPUT_FILE_PATH);
       isSSL = !(cmd.getOptionValue("isSSL") == null || !Objects.equals(cmd.getOptionValue("isSSL"), "true"));
-      if(isSSL) {
+      if (isSSL) {
         ksPath = cmd.getOptionValue("ksFile");
         ksPass = cmd.getOptionValue("ksPass");
       }
@@ -109,6 +109,7 @@ public class MainVerticle extends AbstractVerticle {
     // Serve static resources (HTML, CSS, JS, etc.)
     router.route().handler(StaticHandler.create()
       .setCachingEnabled(false)
+      .setDefaultContentEncoding("UTF-8")
       .setDirectoryTemplate("templates")
       .setIndexPage("templates/index.html"));
 
@@ -129,23 +130,17 @@ public class MainVerticle extends AbstractVerticle {
 
       HttpServerOptions options = new HttpServerOptions().setPort(80);
       if (isSSL) {
-        options
-          .setPort(443)
-          .setSsl(true)
-          .setKeyStoreOptions(jksOptions)
-          .setLogActivity(true);
+        options.setPort(443).setSsl(true).setKeyStoreOptions(jksOptions).setLogActivity(true);
       }
 
-      vertx.createHttpServer(options)
-        .requestHandler(router)
-        .listen(http -> {
-          if (http.succeeded()) {
-            startPromise.complete();
-            LOGGER.info("HTTP server started on port "+http.result().actualPort());
-          } else {
-            startPromise.fail(http.cause());
-          }
-        });
+      vertx.createHttpServer(options).requestHandler(router).listen(http -> {
+        if (http.succeeded()) {
+          startPromise.complete();
+          LOGGER.info("HTTP server started on port " + http.result().actualPort());
+        } else {
+          startPromise.fail(http.cause());
+        }
+      });
     } catch (Exception e) {
       startPromise.fail(e.getMessage());
       LOGGER.error(e.getMessage());
@@ -153,13 +148,15 @@ public class MainVerticle extends AbstractVerticle {
     }
 
   }
-//Thymeleaf Template Handler
+
+  //Thymeleaf Template Handler
   private void handleMainPage(RoutingContext routingContext) {
     ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
+
+
     engine.render(routingContext.data(), "templates/index.html", res -> {
       if (res.succeeded()) {
-        routingContext.response().putHeader("Content-Type", "text/html;charset=utf-8'");
-
+        routingContext.response().putHeader("Content-Type", "text/html;charset=UTF-8'");
         routingContext.response().end(res.result());
       } else {
         routingContext.fail(res.cause());
@@ -179,9 +176,7 @@ public class MainVerticle extends AbstractVerticle {
     }
     // Respond with the validation result as JSON
     JsonObject response = new JsonObject().put("exists", exists).put("isInside", isInside);
-    routingContext.response()
-      .putHeader("Content-Type", "application/json")
-      .end(response.encode());
+    routingContext.response().putHeader("Content-Type", "application/json").end(response.encode());
   }
 
   private boolean validateQRCode(String qrcode) {
