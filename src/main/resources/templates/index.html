@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="fa-IR">
+<html xmlns:th="http://www.thymeleaf.org" lang="en-US">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,32 +7,7 @@
 <!--  <link rel="stylesheet" href="static/css/style.css">-->
 <!--  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>-->
   <script th:src="@{static/html5-qrcode.min.js}" type="text/javascript"></script>
-  <style>
-    @font-face { /* Persian Font */
-      font-family: 'MyFont';
-      src: url(/static/Fonts/Yekan.ttf);
-      unicode-range:U+0600-06FF;
-    }
-    @font-face { /* english font */
-      font-family: 'MyFont';
-      src: url(/static/Fonts/ALGER.TTF);
-      unicode-range: U+0020-007F;
-    }
-
-    body{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: black;
-      font-family: 'MyFont',serif;
-      font-size:12pt;
-    }
-    #reader{
-      width: 500px;
-      height: 500px;
-      background-color: lightgray;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{static/style.css}">
 </head>
 <body>
 <h1>همایش دواپس</h1>
@@ -66,11 +41,11 @@
         const resultDiv = document.getElementById("result");
         resultDiv.innerHTML = data.exists ?
           (data.isInside ?
-            '<span style="color: yellow;">شخص داخل است</span>' :
-          '<span style="color: green;">بلیط صحیح است</span>'):
-        '<span style="color: red;">بلیط مشکل دارد</span>';
+            '<span style="color: yellow;">شخص داخل است</span>' : //if Inside and Exists is True
+          '<span style="color: green;">بلیط صحیح است</span>'): //if Inside is false and Exists is True
+        '<span style="color: red;">بلیط مشکل دارد</span>';  //if Exists is false
       })
-    setTimeout(function(){ html5QrcodeScanner.resume();},1000)
+    setTimeout(function(){ html5QrcodeScanner.resume();},2000)
 
       .catch(error => console.error('Error:', error));
   }
