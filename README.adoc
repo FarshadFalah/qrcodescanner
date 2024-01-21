@@ -1,6 +1,7 @@
 = QR Code Scanner
 
-image::https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io"]
+image::https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io", alt="Vert.x", width=100]
+image::https://img.shields.io/badge/Html5--QRCode-2.3.8-green.svg[link="https://github.com/mebjas/html5-qrcode", alt="Html5-QRCode", width=150]
 
 This is a web-based QR code scanner that reads a file line by line and checks if text exists in that file.
 
@@ -20,11 +21,9 @@ If you want to run it on HTTPS, you must set SSL to true and provide the applica
 
 For creating a self-hosted KeyStore, use the following command:
 
-
 [source,bash]
 ----
 keytool -genkeypair -alias aliasName -keyalg RSA -keysize 2048 -keystore keystoreName.jks -validity 3650
 ----
 
 Created by *Farshad Fallah* for https://shirazlinuxcommunity.ir[*Shiraz Linux Community*].
-
