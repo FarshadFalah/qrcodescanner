@@ -1,6 +1,6 @@
 = QR Code Scanner
 
-image: https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io"]
+image::https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io"]
 
 This is a web-based QR code scanner that reads a file line by line and checks if text exists in that file.
 
