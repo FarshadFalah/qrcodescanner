@@ -1,32 +1,30 @@
-= Qrcodescanner
+= QR Code Scanner
 
-image:https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io"]
+image: https://img.shields.io/badge/vert.x-4.5.1-purple.svg[link="https://vertx.io"]
 
-This application was generated using http://start.vertx.io
+This is a web-based QR code scanner that reads a file line by line and checks if text exists in that file.
 
-== Building
+To run it on HTTP, you must provide the address of the input file and the address to save the output file:
 
-To launch your tests:
-```
-./mvnw clean test
-```
+[source,bash]
+----
+-i "Your Input File Address" -o "Your Output File Address"
+----
 
-To package your application:
-```
-./mvnw clean package
-```
+If you want to run it on HTTPS, you must set SSL to true and provide the application with your KeyStore address and password:
 
-To run your application:
-```
-./mvnw clean compile exec:java
-```
+[source,bash]
+----
+-i "Your Input File Address" -o "Your Output File Address" -ssl "true" -k "Your KeyStore Address" -p "Your KeyStore Password"
+----
 
-== Help
+For creating a self-hosted KeyStore, use the following command:
 
-* https://vertx.io/docs/[Vert.x Documentation]
-* https://stackoverflow.com/questions/tagged/vert.x?sort=newest&pageSize=15[Vert.x Stack Overflow]
-* https://groups.google.com/forum/?fromgroups#!forum/vertx[Vert.x User Group]
-* https://discord.gg/6ry7aqPWXy[Vert.x Discord]
-* https://gitter.im/eclipse-vertx/vertx-users[Vert.x Gitter]
 
+[source,bash]
+----
+keytool -genkeypair -alias aliasName -keyalg RSA -keysize 2048 -keystore keystoreName.jks -validity 3650
+----
+
+Created by *Farshad Fallah* for https://shirazlinuxcommunity.ir[*Shiraz Linux Community*].
 

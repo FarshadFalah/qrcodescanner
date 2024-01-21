@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -32,10 +33,14 @@ public class MainVerticle extends AbstractVerticle {
   private final String[] arg;
 
 
+  public MainVerticle(String[] arg) {
+    this.arg = arg;
+  }
+
   public static void main(String[] args) {
-    LOGGER.info("------------------------------------------------------------------\n\n");
+    LOGGER.info("\n\n<------------------------------------------------------------------>");
     LOGGER.info(Arrays.toString(args));
-    LOGGER.info("------------------------------------------------------------------");
+    LOGGER.info("<------------------------------------------------------------------>\n\n");
 
     final Vertx vertx = Vertx.vertx();
 
@@ -43,25 +48,24 @@ public class MainVerticle extends AbstractVerticle {
     vertx.deployVerticle(new MainVerticle(args));
   }
 
-  public MainVerticle(String[] arg) {
-    this.arg = arg;
-  }
-
+  //Set Input Options
   private static Options getOptions() {
     try {
       Options options = new Options();
 
       Option inputFileOption = new Option("i", "inputFile", true, "Input File");
       Option outputFileOption = new Option("o", "outputFile", true, "Output File");
+      Option isUsingSSL = new Option("ssl", "isSSL", true, "Output File");
       Option ksFileOption = new Option("k", "ksFile", true, "Keystore File");
       Option ksPassOption = new Option("p", "ksPass", true, "Keystore Password");
 
       options.addOption(inputFileOption);
       options.addOption(outputFileOption);
+      options.addOption(isUsingSSL);
       options.addOption(ksFileOption);
       options.addOption(ksPassOption);
       return options;
-    }catch (Exception e){
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -70,6 +74,7 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) {
     String ksPass = "";
     String ksPath = "";
+    boolean isSSL = false;
     try {
       LOGGER.info("Main Verticle Deployed");
       Options options = getOptions();
@@ -81,8 +86,11 @@ public class MainVerticle extends AbstractVerticle {
       LOGGER.info(inputFile);
       OUTPUT_FILE_PATH = cmd.getOptionValue("outputFile");
       LOGGER.info(OUTPUT_FILE_PATH);
-      ksPath = cmd.getOptionValue("ksFile");
-      ksPass = cmd.getOptionValue("ksPass");
+      isSSL = !(cmd.getOptionValue("isSSL") == null || !Objects.equals(cmd.getOptionValue("isSSL"), "true"));
+      if(isSSL) {
+        ksPath = cmd.getOptionValue("ksFile");
+        ksPass = cmd.getOptionValue("ksPass");
+      }
       if (!Files.exists(Path.of(OUTPUT_FILE_PATH))) {
         Files.createFile(Path.of(OUTPUT_FILE_PATH));
       }
@@ -92,6 +100,7 @@ public class MainVerticle extends AbstractVerticle {
       LOGGER.info(tickets);
 
     } catch (IOException | ParseException e) {
+      startPromise.fail(e.getMessage());
       throw new RuntimeException(e);
     }
 
@@ -118,32 +127,35 @@ public class MainVerticle extends AbstractVerticle {
       jksOptions.setPassword(ksPass);
       jksOptions.setPath(ksPath);
 
-
-      HttpServerOptions options = new HttpServerOptions()
-        .setSsl(true)
-        .setKeyStoreOptions(jksOptions)
-        .setLogActivity(true);
+      HttpServerOptions options = new HttpServerOptions().setPort(80);
+      if (isSSL) {
+        options
+          .setPort(443)
+          .setSsl(true)
+          .setKeyStoreOptions(jksOptions)
+          .setLogActivity(true);
+      }
 
       vertx.createHttpServer(options)
         .requestHandler(router)
-        .listen(443, http -> {
+        .listen(http -> {
           if (http.succeeded()) {
             startPromise.complete();
-            LOGGER.info("HTTP server started on port 443");
+            LOGGER.info("HTTP server started on port "+http.result().actualPort());
           } else {
             startPromise.fail(http.cause());
           }
         });
     } catch (Exception e) {
+      startPromise.fail(e.getMessage());
       LOGGER.error(e.getMessage());
+      throw new RuntimeException(e);
     }
 
   }
-
+//Thymeleaf Template Handler
   private void handleMainPage(RoutingContext routingContext) {
     ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
-
-
     engine.render(routingContext.data(), "templates/index.html", res -> {
       if (res.succeeded()) {
         routingContext.response().putHeader("Content-Type", "text/html;charset=utf-8'");
@@ -155,10 +167,9 @@ public class MainVerticle extends AbstractVerticle {
     });
   }
 
+  //Get The qr Code And Validate it and Save it to the File
   private void handleQRCodeValidation(RoutingContext routingContext) {
     String qrcode = routingContext.request().getParam("qrcode");
-
-
     // Validate the QR code by checking against the content of the input file
     boolean exists = validateQRCode(qrcode);
     boolean isInside = inside.contains(qrcode);
@@ -166,8 +177,6 @@ public class MainVerticle extends AbstractVerticle {
       // Write the result to the output file
       writeResultToFile(qrcode, exists);
     }
-
-
     // Respond with the validation result as JSON
     JsonObject response = new JsonObject().put("exists", exists).put("isInside", isInside);
     routingContext.response()
@@ -192,7 +201,7 @@ public class MainVerticle extends AbstractVerticle {
 
         Files.write(Path.of(OUTPUT_FILE_PATH), result.getBytes(), StandardOpenOption.APPEND);
       } catch (IOException e) {
-        e.printStackTrace();
+        LOGGER.error(e.getMessage());
       }
     }
   }

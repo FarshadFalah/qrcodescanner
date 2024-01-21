@@ -183,3 +183,14 @@ nbdist/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/.editorconfig
+/.idea/.gitignore
+/.idea/compiler.xml
+/.idea/encodings.xml
+/.idea/jarRepositories.xml
+/.idea/jpa-buddy.xml
+/.idea/jsLibraryMappings.xml
+/keystoreName.jks
+/output.txt
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
