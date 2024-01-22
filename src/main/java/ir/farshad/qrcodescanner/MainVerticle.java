@@ -38,6 +38,7 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   public static void main(String[] args) {
+
     LOGGER.info("\n\n<------------------------------------------------------------------>");
     LOGGER.info(Arrays.toString(args));
     LOGGER.info("<------------------------------------------------------------------>\n\n");
@@ -97,7 +98,7 @@ public class MainVerticle extends AbstractVerticle {
 
       tickets = Files.readAllLines(Path.of(inputFile));
       inside = Files.readAllLines(Path.of(OUTPUT_FILE_PATH));
-      LOGGER.info(tickets);
+      LOGGER.info(tickets.toString());
 
     } catch (IOException | ParseException e) {
       startPromise.fail(e.getMessage());
