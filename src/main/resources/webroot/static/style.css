@@ -59,18 +59,83 @@ table {
   unicode-range: U+0020-007F;
 }
 
-* { direction: rtl }
-
-body{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
-  font-family: 'MyFont',serif;
-  font-size:12pt;
+/* Reset some default styles */
+body, h1, p {
+  margin: 0;
+  padding: 0;
 }
-#reader{
-  width: 500px;
-  height: 500px;
-  background-color: lightgray;
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #333;
+}
+
+#reader {
+  width: 50%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#result {
+  margin: 20px auto;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Customize the result colors */
+#result span {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+
+}
+
+#result span[style="color: yellow;"] {
+  background-color: #ffd700; /* Yellow */
+}
+
+#result span[style="color: green;"] {
+  background-color: #00cc00; /* Green */
+}
+
+#result span[style="color: red;"] {
+  background-color: #ff6347; /* Tomato */
+}
+
+/* Responsive styles for smaller screens */
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  #result {
+    margin: 10px auto;
+    font-size: 16px;
+  }
+
+  #reader {
+    width: 100%;
+    text-align: center;
+  }
+
 }

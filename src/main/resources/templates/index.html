@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
-<!--  <link rel="stylesheet" href="static/css/style.css">-->
-<!--  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>-->
   <script th:src="@{static/html5-qrcode.min.js}" type="text/javascript"></script>
   <link rel="stylesheet" th:href="@{static/style.css}">
 </head>
@@ -14,11 +12,8 @@
 <div id="reader"></div>
 <div id="result"></div>
 
-<!-- Include the HTML5-QRCode library -->
-  <!-- Your JavaScript logic for scanning QR codes goes here -->
 
 <script>
-  // Sample logic for QR code scanning
 
   const html5QrcodeScanner = new Html5QrcodeScanner(
     "reader", { fps: 10, qrbox: 300 });

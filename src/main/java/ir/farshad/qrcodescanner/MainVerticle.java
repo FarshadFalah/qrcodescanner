@@ -25,11 +25,11 @@ import java.util.Objects;
 
 public class MainVerticle extends AbstractVerticle {
 
-  public static Logger LOGGER = LoggerFactory.getLogger(MainVerticle.class);
-  private static String OUTPUT_FILE_PATH = "";
+  public static final Logger LOGGER = LoggerFactory.getLogger(MainVerticle.class);
+  private String OUTPUT_FILE_PATH = "";
 
-  private static List<String> tickets;
-  private static List<String> inside;
+  private List<String> tickets;
+  private List<String> inside;
   private final String[] arg;
 
 
@@ -39,7 +39,7 @@ public class MainVerticle extends AbstractVerticle {
 
   public static void main(String[] args) {
 
-    LOGGER.info("\n\n<------------------------------------------------------------------>");
+    LOGGER.info("<------------------------------------------------------------------>");
     LOGGER.info(Arrays.toString(args));
     LOGGER.info("<------------------------------------------------------------------>\n\n");
 
@@ -48,7 +48,6 @@ public class MainVerticle extends AbstractVerticle {
     // Deploy the verticle
     vertx.deployVerticle(new MainVerticle(args));
   }
-
   //Set Input Options
   private static Options getOptions() {
     try {
@@ -153,8 +152,6 @@ public class MainVerticle extends AbstractVerticle {
   //Thymeleaf Template Handler
   private void handleMainPage(RoutingContext routingContext) {
     ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
-
-
     engine.render(routingContext.data(), "templates/index.html", res -> {
       if (res.succeeded()) {
         routingContext.response().putHeader("Content-Type", "text/html;charset=UTF-8'");
@@ -193,8 +190,6 @@ public class MainVerticle extends AbstractVerticle {
         inside.add(qrcode);
 //        String result = qrcode + " " + (exists ? "exists\n" : "not found\n");
         String result = qrcode + "\n";
-
-
         Files.write(Path.of(OUTPUT_FILE_PATH), result.getBytes(), StandardOpenOption.APPEND);
       } catch (IOException e) {
         LOGGER.error(e.getMessage());

@@ -194,3 +194,5 @@ nbdist/
 /output.txt
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/vcs.xml
+.vscode
+/.vscode/launch.json
