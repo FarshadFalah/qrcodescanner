@@ -42,6 +42,7 @@
     <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     <exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
+    <maven.compiler.source>17</maven.compiler.source>
 
     <vertx.version>4.5.1</vertx.version>
     <junit-jupiter.version>5.9.1</junit-jupiter.version>
@@ -99,6 +100,26 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.43.4</version>
+        <executions>
+          <execution>
+            <id>docker</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputDirectory>${project.basedir}/src/main/docker</outputDirectory>
+          <!-- Configure the image name -->
+          <name>qrcode Scanner</name>
+          <sourceDirectory>${project.build.directory}</sourceDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>3.3.1</version>
@@ -125,6 +146,130 @@
       </plugin>
     </plugins>
   </build>
+
+
+  <profiles>
+    <profile>
+      <id>native</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.1</version>
+            <executions>
+              <execution>
+                <id>java</id>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+                <configuration>
+                  <mainClass>${main.verticle}</mainClass>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.12.1</version>
+            <configuration>
+              <source>${maven.compiler.source}</source>
+              <target>${maven.compiler.source}</target>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <mainClass>${main.verticle}</mainClass>
+                </manifest>
+              </archive>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addClasspath>true</addClasspath>
+                  <mainClass>${main.verticle}</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </plugin>
+
+
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>0.9.28</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>build-native</id>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+                <phase>install</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <fallback>false</fallback>
+              <buildArgs>
+                --initialize-at-build-time=org.slf4j.simple.SimpleLogger                 --initialize-at-build-time=io.netty.util.internal.logging.Slf4JLoggerFactory
+                --initialize-at-build-time=io.netty.channel.MultithreadEventLoopGroup
+                --initialize-at-build-time=io.netty.util.internal.logging.InternalLoggerFactory
+                --initialize-at-build-time=org.slf4j.LoggerFactory
+                --initialize-at-run-time=io.netty.channel.DefaultFileRegion
+                --initialize-at-run-time=io.netty.channel.epoll.Native
+                --initialize-at-run-time=io.netty.channel.epoll.Epoll
+                --initialize-at-run-time=io.netty.channel.epoll.EpollEventLoop
+                --initialize-at-run-time=io.netty.channel.epoll.EpollEventArray
+                --initialize-at-run-time=io.netty.channel.kqueue.KQueue
+                --initialize-at-run-time=io.netty.channel.kqueue.KQueueEventLoop
+                --initialize-at-run-time=io.netty.channel.kqueue.KQueueEventArray
+                --initialize-at-run-time=io.netty.channel.kqueue.Native
+                --initialize-at-run-time=io.netty.channel.unix.Limits
+                --initialize-at-run-time=io.netty.channel.unix.Errors
+                --initialize-at-run-time=io.netty.channel.unix.IovArray
+                --initialize-at-run-time=io.netty.handler.ssl.BouncyCastleAlpnSslUtils
+                --initialize-at-run-time=io.netty.incubator.codec.quic.InsecureQuicTokenHandler
+                --initialize-at-run-time=io.netty.incubator.codec.quic.SecureRandomQuicConnectionIdGenerator
+                --report-unsupported-elements-at-runtime
+                --initialize-at-build-time=ch.qos.logback
+                -H:+ReportExceptionStackTraces
+              </buildArgs>
+              <agent>
+                <enabled>true</enabled>
+              </agent>
+
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 
 </project>

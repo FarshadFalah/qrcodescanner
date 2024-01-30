@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <script th:src="@{static/verfication.js}" type="text/javascript"></script>
+  <title>دستی</title>
+</head>
+<body>
+<input id="qrcode" type="text">
+<button  onclick="buttonClick()">Click me</button>
+<div id="result"></div>
+
+
+<script>
+  function buttonClick() {
+    const elementById = document.getElementById("qrcode");
+    let text = elementById.value;
+    verify(text);
+  }
+</script>
+</body>
+</html>

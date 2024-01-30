@@ -26,11 +26,10 @@ import java.util.Objects;
 public class MainVerticle extends AbstractVerticle {
 
   public static final Logger LOGGER = LoggerFactory.getLogger(MainVerticle.class);
+  private final String[] arg;
   private String OUTPUT_FILE_PATH = "";
-
   private List<String> tickets;
   private List<String> inside;
-  private final String[] arg;
 
 
   public MainVerticle(String[] arg) {
@@ -48,6 +47,7 @@ public class MainVerticle extends AbstractVerticle {
     // Deploy the verticle
     vertx.deployVerticle(new MainVerticle(args));
   }
+
   //Set Input Options
   private static Options getOptions() {
     try {
@@ -118,20 +118,14 @@ public class MainVerticle extends AbstractVerticle {
 
     // Route to handle the main page
     router.get("/").handler(this::handleMainPage);
+    router.get("/handyvalidation").handler(this::handleHandyPage);
 
     // Route to handle QR code validation
-    router.get("/validate").handler(this::handleQRCodeValidation);
+    router.get("/qrvalidate").handler(this::handleQRCodeValidation);
 
     try {
 
-      JksOptions jksOptions = new JksOptions();
-      jksOptions.setPassword(ksPass);
-      jksOptions.setPath(ksPath);
-
-      HttpServerOptions options = new HttpServerOptions().setPort(80);
-      if (isSSL) {
-        options.setPort(443).setSsl(true).setKeyStoreOptions(jksOptions).setLogActivity(true);
-      }
+      HttpServerOptions options = getHttpServerOptions(ksPass, ksPath, isSSL);
 
       vertx.createHttpServer(options).requestHandler(router).listen(http -> {
         if (http.succeeded()) {
@@ -146,11 +140,32 @@ public class MainVerticle extends AbstractVerticle {
       LOGGER.error(e.getMessage());
       throw new RuntimeException(e);
     }
+  }
 
+  private HttpServerOptions getHttpServerOptions(String ksPass, String ksPath, boolean isSSL) {
+    JksOptions jksOptions = new JksOptions();
+    jksOptions.setPassword(ksPass);
+    jksOptions.setPath(ksPath);
+
+    HttpServerOptions options = new HttpServerOptions().setPort(80);
+    if (isSSL) {
+      options.setPort(443).setSsl(true).setKeyCertOptions(jksOptions).setLogActivity(true);
+    }
+    return options;
   }
 
   //Thymeleaf Template Handler
-  private void handleMainPage(RoutingContext routingContext) {
+  private void handleHandyPage(RoutingContext routingContext) {
+    ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
+    engine.render(routingContext.data(), "templates/handyverfication.html", res -> {
+      if (res.succeeded()) {
+        routingContext.response().putHeader("Content-Type", "text/html;charset=UTF-8'");
+        routingContext.response().end(res.result());
+      } else {
+        routingContext.fail(res.cause());
+      }
+    });
+  }private void handleMainPage(RoutingContext routingContext) {
     ThymeleafTemplateEngine engine = ThymeleafTemplateEngine.create(vertx);
     engine.render(routingContext.data(), "templates/index.html", res -> {
       if (res.succeeded()) {
@@ -166,11 +181,11 @@ public class MainVerticle extends AbstractVerticle {
   private void handleQRCodeValidation(RoutingContext routingContext) {
     String qrcode = routingContext.request().getParam("qrcode");
     // Validate the QR code by checking against the content of the input file
-    boolean exists = validateQRCode(qrcode);
+    var exists = validateQRCode(qrcode);
     boolean isInside = inside.contains(qrcode);
-    if (!isInside) {
+    if (!isInside && exists) {
       // Write the result to the output file
-      writeResultToFile(qrcode, exists);
+      writeResultToFile(qrcode);
     }
     // Respond with the validation result as JSON
     JsonObject response = new JsonObject().put("exists", exists).put("isInside", isInside);
@@ -183,17 +198,15 @@ public class MainVerticle extends AbstractVerticle {
 
   }
 
-  private void writeResultToFile(String qrcode, boolean exists) {
+  private void writeResultToFile(String qrcode) {
     // Write the QR code and validation result to the output file
-    if (exists) {
-      try {
-        inside.add(qrcode);
+    try {
+      inside.add(qrcode);
 //        String result = qrcode + " " + (exists ? "exists\n" : "not found\n");
-        String result = qrcode + "\n";
-        Files.write(Path.of(OUTPUT_FILE_PATH), result.getBytes(), StandardOpenOption.APPEND);
-      } catch (IOException e) {
-        LOGGER.error(e.getMessage());
-      }
+      String result = qrcode + "\n";
+      Files.write(Path.of(OUTPUT_FILE_PATH), result.getBytes(), StandardOpenOption.APPEND);
+    } catch (IOException e) {
+      LOGGER.error(e.getMessage());
     }
   }
 }
