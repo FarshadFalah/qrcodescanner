@@ -32,7 +32,7 @@
   </dependencies>
   <artifactId>qrcodescanner</artifactId>
 
-  <version>1.0.2</version>
+  <version>1.1.0</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -98,26 +98,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.43.4</version>
-        <executions>
-          <execution>
-            <id>docker</id>
-            <phase>package</phase>
-            <goals>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <outputDirectory>${project.basedir}/src/main/docker</outputDirectory>
-          <!-- Configure the image name -->
-          <name>qrcode Scanner</name>
-          <sourceDirectory>${project.build.directory}</sourceDirectory>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -237,7 +217,8 @@
             <configuration>
               <fallback>false</fallback>
               <buildArgs>
-                --initialize-at-build-time=org.slf4j.simple.SimpleLogger                 --initialize-at-build-time=io.netty.util.internal.logging.Slf4JLoggerFactory
+                --initialize-at-build-time=org.slf4j.simple.SimpleLogger
+                --initialize-at-build-time=io.netty.util.internal.logging.Slf4JLoggerFactory
                 --initialize-at-build-time=io.netty.channel.MultithreadEventLoopGroup
                 --initialize-at-build-time=io.netty.util.internal.logging.InternalLoggerFactory
                 --initialize-at-build-time=org.slf4j.LoggerFactory
