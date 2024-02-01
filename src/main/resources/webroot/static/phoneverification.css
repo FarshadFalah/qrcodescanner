@@ -1,0 +1,70 @@
+/* Reset some default styles */
+body, h1, h2, p, div, button, input {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set a background color and some basic styling for the body */
+body {
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+/* Center the content in the middle of the page */
+body, html {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style the input field */
+#qrcode {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+/* Style the button */
+#qrbutton {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Style the result div */
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Media query for tablets (landscape) and larger */
+@media (min-width: 768px) {
+  #qrcode {
+    font-size: 18px;
+  }
+
+  #qrbutton {
+    font-size: 18px;
+  }
+
+  #result {
+    font-size: 20px;
+  }
+}
+
+/* Media query for smaller devices (mobile) */
+@media (max-width: 767px) {
+  #qrcode {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  #qrbutton {
+    width: 100%;
+    margin-top: 10px;
+  }
+}

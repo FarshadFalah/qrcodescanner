@@ -118,7 +118,7 @@ public class MainVerticle extends AbstractVerticle {
 
     // Route to handle the main page
     router.get("/").handler(this::handleMainPage);
-    router.get("/handyvalidation").handler(this::handleHandyPage);
+    router.get("/pv").handler(this::handleHandyPage);
 
     // Route to handle QR code validation
     router.get("/qrvalidate").handler(this::handleQRCodeValidation);

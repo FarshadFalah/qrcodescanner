@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <script th:src="@{static/verfication.js}" type="text/javascript"></script>
-  <title>دستی</title>
+  <link rel="stylesheet" type="text/css" th:href="@{static/phoneverification.css}">
+  <title>Phone Validator</title>
 </head>
 <body>
 <input id="qrcode" type="text">
-<button  onclick="buttonClick()">Click me</button>
+<button id="qrbutton"  onclick="buttonClick()">Click me</button>
 <div id="result"></div>
 
 
